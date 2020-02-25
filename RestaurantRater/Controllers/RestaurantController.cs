@@ -65,11 +65,32 @@ namespace RestaurantRater.Controllers
 
                     return Ok();
                 }
+                return BadRequest(ModelState);
             }
 
             return BadRequest(ModelState);
         }
 
         //DELETE BY ID
+        [HttpDelete]
+        public async Task<IHttpActionResult> DeleteRestaurantById(int id)
+        {
+            Restaurant restaurantId = await _context.Restaurants.FindAsync(id);
+
+            if (restaurantId == null)
+            {
+                return NotFound();
+                //return BadRequest();
+            }
+
+            _context.Restaurants.Remove(restaurantId);
+
+            if (await _context.SaveChangesAsync() == 1) 
+            {
+                return Ok();
+            }
+
+            return InternalServerError();
+        }
     }
 }
